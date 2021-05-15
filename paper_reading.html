@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 5px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  user-select: text;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #aaa;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  background-color: yellow;
+  color: blue;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+</style>
+<title>Paper Reading</title>
+</head>
+<body>
+
+<!-- ########################################################################## -->
+
+<h1>Paper reading list</h1>
+
+<p>This page serves as my paper reading list related to my research area.
+There are many kinds of security issues related to neural networks.
+Although the most famous one is using adversary samples to trick neural networks,
+my interest focuses on the security issues of the neural network itself and the privacy of user input data.
+More information about me can be found on my <a href="http://people.cs.pitt.edu/~leizhao/">home page</a>.</p>
+
+<!-- ########################################################################## -->
+
+<hr>
+<h2>Homomorphic Encryption</h2>
+
+<p><a href="https://cseweb.ucsd.edu/~daniele/LatticeLinks/FHE.html">Daniele Micciancio's Lattice Cryptography Links</a> and <a href="https://people.csail.mit.edu/vinodv/FHE/FHE-refs.html">Vinod Vaikuntanathan FHE links</a> have a full list of papers on major HE schemes and available libraries. <a href="https://blog.openmined.org/ckks-explained-part-1-simple-encoding-and-decoding/">This post</a> has details to help understand details about CKKS.</p>
+
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;BGV&gt; Fully Homomorphic Encryption without Bootstrapping</button>
+<div class="content">
+  <p>Used in HElib.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;FV&gt; Somewhat Practical Fully Homomorphic Encryption</button>
+<div class="content">
+  <p>Used in SEAL.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;CKKS&gt; Homomorphic Encryption for Arithmetic of Approximate Numbers</button>
+<div class="content">
+  <p>Used in HEAAN.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;CKKS&gt; Bootstrapping for Approximate Homomorphic Encryption</button>
+<div class="content">
+  <p>Use sine function to approximate mod operation. Swap slots with coefficients in ciphertext during bootstrapping.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;CKKS&gt; Improved Bootstrapping for Approximate Homomorphic Encryption</button>
+<div class="content">
+  <p>Use Chebyshev polynomials to approximate mod operation.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> &lt;CKKS&gt; A Full RNS Variant of Approximate Homomorphic Encryption</button>
+<div class="content">
+  <p></p>
+</div>
+
+<!-- ########################################################################## -->
+
+<hr>
+<h2>Secure Multi-Party Computation (SMPC)</h2>
+
+<button type="button" class="collapsible">
+<span>&#8226;</span> ABY – A Framework for Efficient Mixed-Protocol Secure Two-Party Computation [NDSS 2015]</button>
+<div class="content">
+  <p>A good library for Arithmetic sharing, Boolean sharing, and Yao’s garbled circuits.</p>
+</div>
+
+<h3>Arithmetic Sharing</h3>
+
+<button type="button" class="collapsible">
+<span>&#8226;</span> Arithmetic sharing</button>
+<div class="content">
+  <ul>
+    <li><b>Conditions:</b> <b>P<sub>0</sub></b> holds private integer <i>x</i>, <b>P<sub>1</sub></b> holds private integer <i>y</i>.</li>
+    <li><b>Sharing:</b> <b>P<sub>0</sub></b> generates a random integer <i>r<sub>x</sub></i>, keeps <i>x<sub>0</sub></i>=<i>x</i>-<i>r<sub>x</sub></i> as his share of <i>x</i>, and sends <i>x<sub>1</sub></i>=<i>r<sub>x</sub></i> to <b>P<sub>1</sub></b> as <b>P<sub>1</sub></b>'s share of <i>x</i>. Similarly, <b>P<sub>1</sub></b> generates a random integer <i>r<sub>y</sub></i>, keeps <i>y<sub>1</sub></i>=<i>y</i>-<i>r<sub>y</sub></i> as his share of <i>y</i>, and sends <i>y<sub>0</sub></i>=<i>r<sub>y</sub></i> to <b>P<sub>0</sub></b> as <b>P<sub>0</sub></b>'s share of <i>y</i>.</li>
+    <li><b>Addition:</b> <b>P<sub>i</sub></b> computes <i>z<sub>i</sub></i>=<i>x<sub>i</sub></i>+<i>y<sub>i</sub></i>. The sum can be recovered by <i>z</i>=<i>z<sub>0</sub></i>+<i>z<sub>1</sub></i>=<i>x</i>+<i>y</i>.</li>
+    <li><b>Multiplication:</b> First use HE or OT to generate <i>c<sub>0</sub></i>, <i>c<sub>1</sub></i>, <i>a<sub>0</sub></i>, <i>a<sub>1</sub></i>, <i>b<sub>0</sub></i> and <i>b<sub>1</sub></i>, such that <i>c</i>=<i>c<sub>0</sub></i>+<i>c<sub>1</sub></i>=(<i>a<sub>0</sub></i>&times;<i>b<sub>0</sub></i>)+(<i>a<sub>1</sub></i>&times;<i>b<sub>1</sub></i>). <b>P<sub>0</sub></b> holds <i>c<sub>0</sub></i>, <i>a<sub>0</sub></i> and <i>b<sub>0</sub></i>, <b>P<sub>1</sub></b> holds <i>c<sub>1</sub></i>, <i>a<sub>1</sub></i> and <i>b<sub>1</sub></i>. <b>P<sub>i</sub></b> computes <i>e<sub>i</sub></i>=<i>x<sub>i</sub></i>-<i>a<sub>i</sub></i> and <i>f<sub>i</sub></i>=<i>y<sub>i</sub></i>-<i>b<sub>i</sub></i>. <b>P<sub>i</sub></b> recovers <i>e</i> and <i>f</i>. Finally, <b>P<sub>i</sub></b> computes <i>z<sub>i</sub></i>=<i>i</i>&times<i>e</i>&times;<i>f</i>+<i>f</i>&times;<i>a<sub>i</sub></i>+<i>e</i>&times;<i>b<sub>i</sub></i>+<i>c<sub>i</sub></i>. The product can be recovered by <i>z</i>=<i>z<sub>0</sub></i>+<i>z<sub>1</sub></i>=<i>x</i>&times;<i>y</i>.</li>
+  </ul>
+</div>
+
+<h3>Boolean Sharing</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Boolean sharing</button>
+<div class="content">
+  <ul>
+    <li><b>Conditions:</b> <b>P<sub>0</sub></b> holds private bit <i>x</i>, <b>P<sub>1</sub></b> holds private bit <i>y</i>.</li>
+    <li><b>Sharing:</b> <b>P<sub>0</sub></b> generates a random bit <i>r<sub>x</sub></i>, keeps <i>x<sub>0</sub></i>=<i>x</i>&oplus;<i>r<sub>x</sub></i> as his share of <i>x</i>, and sends <i>x<sub>1</sub></i>=<i>r<sub>x</sub></i> to <b>P<sub>1</sub></b> as <b>P<sub>1</sub></b>'s share of <i>x</i>. Similarly, <b>P<sub>1</sub></b> generates a random bit <i>r<sub>y</sub></i>, keeps <i>y<sub>1</sub></i>=<i>y</i>&oplus;<i>r<sub>y</sub></i> as his share of <i>y</i>, and sends <i>y<sub>0</sub></i>=<i>r<sub>y</sub></i> to <b>P<sub>0</sub></b> as <b>P<sub>0</sub></b>'s share of <i>y</i>.</li>
+    <li><b>XOR:</b> <b>P<sub>i</sub></b> computes <i>z<sub>i</sub></i>=<i>x<sub>i</sub></i>&oplus;<i>y<sub>i</sub></i>. The XOR can be recovered by <i>z</i>=<i>z<sub>0</sub></i>+<i>z<sub>1</sub></i>=<i>x</i>&oplus;<i>y</i>.</li>
+    <li><b>AND:</b> First use HE or OT to generate <i>c<sub>0</sub></i>, <i>c<sub>1</sub></i>, <i>a<sub>0</sub></i>, <i>a<sub>1</sub></i>, <i>b<sub>0</sub></i> and <i>b<sub>1</sub></i>, such that <i>c</i>=<i>c<sub>0</sub></i>&oplus;<i>c<sub>1</sub></i>=(<i>a<sub>0</sub></i>&and;<i>b<sub>0</sub></i>)&oplus;(<i>a<sub>1</sub></i>&and;<i>b<sub>1</sub></i>). <b>P<sub>0</sub></b> holds <i>c<sub>0</sub></i>, <i>a<sub>0</sub></i> and <i>b<sub>0</sub></i>, <b>P<sub>1</sub></b> holds <i>c<sub>1</sub></i>, <i>a<sub>1</sub></i> and <i>b<sub>1</sub></i>. <b>P<sub>i</sub></b> computes <i>e<sub>i</sub></i>=<i>x<sub>i</sub></i>&oplus;<i>a<sub>i</sub></i> and <i>f<sub>i</sub></i>=<i>y<sub>i</sub></i>&oplus;<i>b<sub>i</sub></i>. <b>P<sub>i</sub></b> recovers <i>e</i> and <i>f</i>. Finally, <b>P<sub>i</sub></b> computes <i>z<sub>i</sub></i>=<i>i</i>&and;<i>e</i>&and;<i>f</i>&oplus;<i>f</i>&and;<i>a<sub>i</sub></i>&oplus;<i>e</i>&and;<i>b<sub>i</sub></i>&oplus;<i>c<sub>i</sub></i>. The product can be recovered by <i>z</i>=<i>z<sub>0</sub></i>&oplus;<i>z<sub>1</sub></i>=<i>x</i>&and;<i>y</i>.</li>
+    </ul>
+</div>
+
+<h3>Garbled Circuits</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> <a href="https://www.imperial.ac.uk/media/imperial-college/faculty-of-engineering/computing/public/1718-ug-projects/Admissions-Engagement-User-Group-1-presentation-090217.pdf">On Garbled Circuits</a></button>
+<div class="content">
+  <p>Detailed introduction on basic Yao's garbled circuits and optimizations.</p>
+</div>
+
+<button type="button" class="collapsible">
+<span>&#8226;</span> <a href="http://web.mit.edu/sonka89/www/papers/2017ygc.pdf">A Gentle Introduction to Yao’s Garbled Circuits</a></button>
+<div class="content">
+  <p>Brief introduction on basic Yao's garbled circuits and optimizations.</p>
+</div>
+
+<button type="button" class="collapsible">
+<span>&#8226;</span> <a href="https://homepages.cwi.nl/~schaffne/courses/crypto/2014/presentations/Kostis_Yao.pdf">Yao’s Garbled Circuit</a></button>
+<div class="content">
+  <p>Slides on basic Yao's garbled circuits.</p>
+</div>
+
+<h3>Oblivious Transfer</h3>
+
+<!-- ########################################################################## -->
+
+<hr>
+<h2>Neural Networks</h2>
+
+<h3>HE + NN</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Cryptonets: Applying neural networks to encrypted data with high throughput and accuracy [JMLR 2016]</button>
+<div class="content">
+  <p>First work to use HE for NN inference. Modifications to NNs: (1) square activation; (2) sum pooling.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Privacy-Preserving Classification on Deep Neural Network [IACR Cryptology ePrint Archive 2017]</button>
+<div class="content">
+  <p>Based on Cryptonets, add batchnormalization layers, use higher degree polynomials to approximate ReLU.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span>  Fast Homomorphic Evaluation of Deep Discretized Neural Networks [CRYPTO 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Secure Outsourced Matrix Computation and Application to Neural Networks [CCS 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Faster CryptoNets: Leveraging Sparsity for Real-World Encrypted Inference [S&ampP 2019 in submission]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> SHE: A Fast and Accurate Deep Neural Network for Encrypted Data [NIPS 2019]</button>
+<div class="content">
+  <p>(1) Use TFHE as HE library to encrypt input bit by bit. (2) Quantize weights to power of 2. (3) Use HE gates to build ReLU and maxpooling functions.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> TAPAS: Tricks to Accelerate (encrypted) Prediction As a Service [arXiv preprint arXiv:1806.03461]</button>
+<div class="content">
+  <p></p>
+</div>
+
+<h3>SMPC + NN</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Deepsecure: Scalable provably-secure deep learning [DAC 2018]</button>
+<div class="content">
+  <p>Data pre-precessing. Model pruning. Client can use a proxy server for garbling the circuits. Leverage the industrial synthesis tool. Use sequential circuits as opposed to combinational circuits</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> ABY3: A Mixed Protocol Framework for Machine Learning [CCS 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Chameleon: A Hybrid Secure Computation Framework for Machine Learning Applications [AsiaCCS 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> XONN: XNOR-based Oblivious Deep Neural Network Inference [USENIX 2019]</button>
+<div class="content">
+  <p></p>
+</div>
+
+<h3>HE + SMPC + NN</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> SecureML: A System for Scalable Privacy-Preserving Machine Learning [S&ampP 2017]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Oblivious Neural Network Predictions via MiniONN Transformations [CCS 2017]</button>
+<div class="content">
+  <p>Use ABY library for 2PC. Use SEAL for HE. Use HE to generate shares. Use Arithmetic Sharing for matrix vector multiplication. Use GC for ReLU and sigmoid. Use Arithmetic Sharing for mean pooling. Use GC for max pooling. Use Arithmetic Sharing for square activations. Use GC for rescaling values within range.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> GAZELLE: A Low Latency Framework for Secure Neural Network Inference [USENIX 2018]</button>
+<div class="content">
+  <p>Use HE to compute convolutional and fully connected layers, use GC to compute activation and pooling layers.</p>
+  <ul>
+    <li>For convolutional and fully connected layers, server and client each has their own share of the input to the layer (server has <i>X<sub>s</sub></i>, client has <i>X<sub>c</sub></i>, and <i>X<sub>s</sub></i>+<i>X<sub>c</sub></i>=<i>X</i>, <i>X</i> is the real input to this layer). Client send Enc(<i>X<sub>c</sub></i>) to server, and server computes Enc(<i>Y</i>) = F(Enc(<i>X<sub>s</sub></i>)+Enc(<i>X<sub>c</sub></i>)) = F(Env(<i>X</i>)). <i>Y</i> is the result of this layer. Before sending result back to client, server generates a random <i>r</i>, and send Enc(<i>Y</i>-<i>r</i>) to client, and client decrypt it to get <i>Y<sub>c</sub></i> = <i>Y</i>-<i>r</i> as client's share of the result. Server keeps <i>Y<sub>s</sub></i> = <i>r</i> as server's share of the result.</li>
+    <li>For activation and pooling layers, server and client each has their own share of the input to the layer (server has <i>Y<sub>s</sub></i>, client has <i>Y<sub>c</sub></i>, and <i>Y<sub>s</sub></i>+<i>Y<sub>c</sub></i>=<i>Y</i>, <i>Y</i> is the real input to this layer). Then use Garbled Circuit to compute the result of this layer, and server gets his share of the result <i>Z<sub>s</sub></i>, client has his share of the result <i>Z<sub>c</sub></i>.</li>
+  </ul>
+  <p>Reorder slots in ciphertexts.</p>
+</div>
+
+<h3>Watermarks + NN</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Digital Watermarking for Deep Neural Networks [IJMIR 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+
+<h3>Hardware + NN</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> AEP: An Error-bearing Neural Network Accelerator for Energy Efficiency and Model Protection [ICCAD 2017]</button>
+<div class="content">
+  <p>Use hardware information as fingerprints to protect NN models.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> P3M: A PIM-based Neural Network Model Protection Scheme for Deep Learning Accelerator [DAC 2018]</button>
+<div class="content">
+  <p>Same idea with AEP. Use eDRAM startup values as PUFs.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Oblivious Multi-Party Machine Learning on Trusted Processors [USENIX 2016]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Privacy Preserving Deep Neural Network Prediction using Trusted Hardware [master thesis 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Slalom: Fast, Verifiable and Private Execution of Neural Networks in Trusted Hardware [ICLR 2019]</button>
+<div class="content">
+  <p>Quantize to integers of power of 2. Add random noise to protext weights.</p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Goten: GPU-Outsourcing Trusted Execution of Neural Network Training and Prediction [ICLR 2010 in submission]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> TensorSCONE: A Secure TensorFlow Framework using Intel SGX [arxiv]</button>
+<div class="content">
+  <p></p>
+</div>
+
+<h3>Attacks</h3>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Machine Learning Models that Remember Too Much [CCS 2017]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Property Inference Attacks on Deep Neural Networks using Permutation Invariant Representations [CCS 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+<button type="button" class="collapsible">
+<span>&#8226;</span> Machine Learning with Membership Privacy using Adversarial Regularization [CCS 2018]</button>
+<div class="content">
+  <p></p>
+</div>
+
+<!-- ########################################################################## -->
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+
+</body>
+</html>
