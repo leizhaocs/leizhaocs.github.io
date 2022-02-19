@@ -29,6 +29,53 @@ syntax on
 " enable backspace
 set backspace=indent,eol,start
 
+" enable folding
+set foldmethod=syntax
+set foldlevel=20
+
+" enable mouse
+set mouse=a
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""
+" set tab lables
+
+set tabline=%!MyTabLine()
+
+function MyTabLine()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    " select the highlighting
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+
+    " set the tab page number (for mouse clicks)
+    let s .= '%' . (i + 1) . 'T'
+
+    " the label is made by MyTabLabel()
+    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+  endfor
+
+  " after the last tab fill with TabLineFill and reset tab page nr
+  let s .= '%#TabLineFill#%T'
+
+  " right-align the label to close the current tab page
+  if tabpagenr('$') > 1
+    let s .= '%=%#TabLine#%999Xclose'
+  endif
+
+  return s
+endfunction
+
+" get the nth tab's label, n is the table ID, starts from 1
+function MyTabLabel(n)
+  let buflist = tabpagebuflist(a:n)
+  let label = bufname(buflist[1])
+  return fnamemodify(label, ":t")
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""
 " move
 
@@ -37,13 +84,14 @@ nnoremap j h
 nnoremap k j
 nnoremap l l
 nnoremap i k
-nnoremap <space> M
 
 " scroll up and down
 nnoremap , <c-y>
 nnoremap m <c-e>
-nnoremap y <c-b>
-nnoremap n <c-f>
+
+" switch between tabs
+nnoremap y gT
+nnoremap u gt
 
 " move to the beginning and end of line
 nnoremap o ^
@@ -59,19 +107,18 @@ nnoremap ' w
 nnoremap . ge
 nnoremap / e
 
-" previous cursor position
-nnoremap u <c-o>
+" move cursor to the middle of screen
+nnoremap n M
 
 " make the same mapping for visual mode
 vnoremap j h
 vnoremap k j
 vnoremap l l
 vnoremap i k
-vnoremap <space> M
 vnoremap , <c-y>
 vnoremap m <c-e>
-vnoremap y <c-b>
-vnoremap n <c-f>
+vnoremap y gT
+vnoremap u gt
 vnoremap o ^
 vnoremap p $
 vnoremap [ gg
@@ -80,7 +127,7 @@ vnoremap ; b
 vnoremap ' w
 vnoremap . ge
 vnoremap / e
-vnoremap <space> <c-o>
+vnoremap n M
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""
 " insert
@@ -150,6 +197,10 @@ nnoremap tt <kMultiply>
 nnoremap g N
 nnoremap h n
 
+" toggle fold open and close
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+vnoremap <Space> zf
+
 """""""""""""""""""""""""""""""""""""""""""""""""""
 " tab
 
@@ -157,33 +208,66 @@ nnoremap h n
 nnoremap <tab> <c-w>w
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
-" fern
+" nerdtree
 
-" switch to explorer
-nnoremap <tab> <c-w>w
+" open nerdtree when start vim
+autocmd VimEnter * NERDTree 
 
-" open and close fern
-nnoremap b :Fern . -drawer -toggle -reveal=% <cr>
+" toggle nerdtree
+nnoremap b :NERDTreeToggle<CR>
 
-let g:fern#disable_default_mappings = 1
+" open existing nerdtree on each new tab
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 
-augroup fern_setup
-    autocmd!
-    autocmd VimEnter * ++nested Fern . -drawer -toggle -reveal=% -width=25
-    autocmd filetype fern call FernInit()
-augroup END
+" exit vim if nerdtree is the only window remaining in the only tab
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
-function! FernInit()
-    set nonumber
-    nmap <buffer><expr>
-        \ <Plug>(fern-my-open-expand-collapse)
-        \ fern#smart#leaf(
-        \   "\<Plug>(fern-action-open:select)",
-        \   "\<Plug>(fern-action-expand)",
-        \   "\<Plug>(fern-action-collapse)",
-        \ )
-    nmap <buffer> <enter> <Plug>(fern-my-open-expand-collapse)
-    nmap <buffer> - <Plug>(fern-action-leave)
-    nmap <buffer> = <Plug>(fern-action-enter)
-endfunction
+" close the tab if nerd tree is the only window in it
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
+" disable highlighting current open node in nerdtree
+let NERDTreeHighlightCursorline = 0
+
+" single click to open directory, double click to open file
+let NERDTreeMouseMode = 2
+
+" change nerdtree's default key mapping
+let g:NERDTreeMapActivateNode = "QQ"
+let g:NERDTreeMapPreview = "v"
+let g:NERDTreeMapOpenInTab = "QQ"
+let g:NERDTreeMapOpenInTabSilent = "QQ"
+let g:NERDTreeMapOpenSplit = "d"
+let g:NERDTreeMapPreviewSplit = "QQ"
+let g:NERDTreeMapOpenVSplit = "s"
+let g:NERDTreeMapPreviewVSplit = "QQ"
+let g:NERDTreeMapCustomOpen = "<CR>"
+let g:NERDTreeMapOpenRecursively = "QQ"
+let g:NERDTreeMapCloseDir = "c"
+let g:NERDTreeMapCloseChildren = "QQ"
+let g:NERDTreeMapOpenExpl = "QQ"
+let g:NERDTreeMapDeleteBookmark = "QQ"
+let g:NERDTreeMapJumpRoot = "q"
+let g:NERDTreeMapJumpParent = "w"
+let g:NERDTreeMapJumpFirstChild = "QQ"
+let g:NERDTreeMapJumpLastChild = "e"
+let g:NERDTreeMapJumpNextSibling = "t"
+let g:NERDTreeMapJumpPrevSibling = "r"
+let g:NERDTreeMapChangeRoot = "g"
+let g:NERDTreeMapUpdir = "a"
+let g:NERDTreeMapUpdirKeepOpen = "QQ"
+let g:NERDTreeMapRefresh = "f"
+let g:NERDTreeMapRefreshRoot = "QQ"
+let g:NERDTreeMapMenu = "QQ"
+let g:NERDTreeMapChdir = "QQ"
+let g:NERDTreeMapCWD = "QQ"
+let g:NERDTreeMapToggleHidden = "z"
+let g:NERDTreeMapToggleFilters = "QQ"
+let g:NERDTreeMapToggleFiles = "QQ"
+let g:NERDTreeMapToggleBookmarks = "QQ"
+let g:NERDTreeMapQuit = "QQ"
+let g:NERDTreeMapToggleZoom = "x"
+let g:NERDTreeMapHelp = "?"
+let g:NERDTreeMenuDown = "i"
+let g:NERDTreeMenuUp = "k"
+
+let g:NERDTreeCustomOpenArgs = {'file' : {'where' : 't', 'reuse' : 'all', 'keepopen' : 1}, 'dir' : {}}
